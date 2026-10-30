@@ -144,8 +144,8 @@ notes(s, "Introduce the project and the team. SwarmFolio compares a particle swa
 
 # ------------------------------------------------------------------ 1 TOC
 s = S[1]; prep(s, "Table of Contents")
-items = [("Abstract", 3), ("Introduction", 4), ("Literature Survey", 6), ("Requirement Analysis and Specification", 7), ("Design", 8),
-         ("Implementation", 10), ("Testing and Validation", 12), ("Results and Discussion", 13), ("Conclusion", 17), ("POs mapping matrix", 18)]
+items = [("Abstract", 3), ("Introduction", 4), ("Literature Survey", 6), ("Requirement Analysis and Specification", 8), ("Design", 9),
+         ("Implementation", 11), ("Testing and Validation", 13), ("Results and Discussion", 14), ("Conclusion", 18), ("POs mapping matrix", 19)]
 for i, (n, sl) in enumerate(items):
     col, row = divmod(i, 5)
     x, y = 0.95 + col * 6.1, 1.85 + row * 0.96
@@ -215,25 +215,55 @@ for i, g in enumerate(["SDG 4  Quality Education", "SDG 8  Decent Work and Econo
 text(s, 0.65, 6.4, 12, 0.4, "Scope: simulated markets, long-only portfolios, no trading costs in the optimisation", 14, False, GRAY)
 notes(s, "Four deliverables: the library, two optimisers, a fair evaluation protocol and a browser workbench. Scope is limited to simulated markets, which is stated as a limitation.")
 
-# ------------------------------------------------------------------ 5 Literature
+# ------------------------------------------------------------------ 5 Literature: survey table
 s = S[5]; prep(s, "Literature Survey")
-line_y = 3.45
-box(s, 0.8, line_y - 0.03, 11.8, 0.06, GRAY, shape=MSO_SHAPE.RECTANGLE, name="Timeline")
-tl = [("1952", "Markowitz", "mean-variance"), ("1995", "Kennedy, Eberhart", "particle swarm"), ("2000", "Rockafellar; Chang", "CVaR; cardinality search"),
-      ("2002", "Deb et al.", "NSGA-II"), ("2004", "Coello et al.", "multi-objective PSO"), ("2009-12", "Cura; Zhu; Deng", "PSO for portfolios"), ("2012", "Metaxiotis", "MOEA review")]
-for i, (yr, who, what) in enumerate(tl):
-    cx = 1.35 + i * 1.75
-    circle(s, cx - 0.14, line_y - 0.14, 0.28, BLUE if i % 2 == 0 else ORANGE, "")
-    above = i % 2 == 0
-    yy = 1.75 if above else 3.8
-    text(s, cx - 0.95, yy, 1.9, 1.5, [(yr, 20, True, BLUE if above else ORANGE), (who, 14, True, DARK), (what, 14, False, DARK)], align="c", anchor="b" if above else "t")
-text(s, 0.65, 5.2, 6, 0.4, "Research gaps we address", 16, True, BLUE)
-for i, g in enumerate(["Held-out tests over many markets", "One repair operator for both algorithms", "Three-objective swarm front with CVaR", "Search you can watch and inspect"]):
-    label_box(s, 0.65 + i * 3.1, 5.7, 2.95, 0.85, g, fill=TINT, size=14, radius=0.15)
-notes(s, "From Markowitz to NSGA-II and multi-objective PSO. The surveyed portfolio-PSO papers optimise one scalarised objective and evaluate mostly in-sample, which motivates the four gaps shown.")
+hdr = ["Paper Title", "Name of Journal / Conference", "Published Year", "Novelty / Techniques", "Limitations", "Gap Identified"]
+rows = [
+ ("Portfolio selection (Markowitz)", "The Journal of Finance", "1952", "Mean-variance model, efficient frontier", "Variance only; no holding limits", "Needs tail risk and constraints"),
+ ("Optimization of conditional value-at-risk (Rockafellar, Uryasev)", "The Journal of Risk", "2000", "CVaR as a tail-risk measure", "One risk measure at a time", "Combine with return and volatility"),
+ ("Heuristics for cardinality constrained portfolio optimisation (Chang et al.)", "Computers & Operations Research", "2000", "GA, tabu search, annealing with holding limits", "Limits make the frontier hard to compute exactly", "Fair comparison of heuristics"),
+ ("A fast and elitist multiobjective GA: NSGA-II (Deb et al.)", "IEEE Trans. Evolutionary Computation", "2002", "Non-dominated sorting, crowding distance", "General method, not portfolio-specific", "Needs portfolio constraint handling"),
+ ("Handling multiple objectives with PSO (Coello et al.)", "IEEE Trans. Evolutionary Computation", "2004", "External archive guides the swarm", "General method, not portfolio-specific", "Needs a swarm vs GA comparison"),
+ ("PSO for constrained portfolios (Cura; Zhu et al.; Deng et al.)", "Nonlinear Anal. RWA; Expert Syst. Appl.", "2009 to 2012", "PSO with cardinality and other constraints", "One scalarised objective", "No three-objective front with CVaR"),
+ ("A portfolio model with three objectives and discrete variables (Anagnostopoulos, Mamanis)", "Computers & Operations Research", "2010", "Tri-objective MOEAs: risk, return, number of securities", "Third objective is holding count, not tail risk", "Swarm, CVaR and held-out tests added here"),
+]
+widths = [3.05, 2.0, 1.0, 2.2, 2.05, 1.85]
+tshape = s.shapes.add_table(len(rows) + 1, 6, Inches(0.6), Inches(1.4), Inches(sum(widths)), Inches(4.9)); tshape.name = "Literature survey table"
+tbl = tshape.table
+for j, wd in enumerate(widths): tbl.columns[j].width = Inches(wd)
+def cell_set(c, txt, size, bold=False, color=None):
+    c.text = txt
+    c.margin_left = c.margin_right = Inches(0.07); c.margin_top = c.margin_bottom = Inches(0.03)
+    c.vertical_anchor = MSO_ANCHOR.MIDDLE
+    for p in c.text_frame.paragraphs:
+        for r in p.runs:
+            r.font.size = Pt(size); r.font.bold = bold; r.font.name = "Calibri"
+            if color: r.font.color.rgb = rgb(color)
+for j, h in enumerate(hdr): cell_set(tbl.cell(0, j), h, 14, True, WHITE)
+tbl.rows[0].height = Inches(0.58)
+for i, r_ in enumerate(rows, 1):
+    tbl.rows[i].height = Inches(0.62)
+    for j, v in enumerate(r_): cell_set(tbl.cell(i, j), v, 12, False, DARK)
+notes(s, "Detailed survey in the required format: paper, venue, year, technique, limitation and the gap each leaves. The portfolio PSO papers use one scalarised objective, which is the gap our three-objective front addresses. Full references are in the report.")
+
+# ------------------------------------------------------------------ 5b Literature: gaps and mapping
+s = S[6]; prep(s, "Literature Survey: gaps and our objectives")
+text(s, 0.65, 1.5, 5.4, 0.4, "Research gap identified", 18, True, BLUE)
+text(s, 7.35, 1.5, 5.4, 0.4, "Our objective that addresses it", 18, True, ORANGE)
+pairs = [("Held-out testing across many markets is rare", "Test portfolios on 30 simulated markets with a paired test"),
+         ("Constraint handling differs between algorithms", "One shared repair operator for the swarm and the GA"),
+         ("Swarm studies use a single scalarised objective", "Three-objective model: return, volatility, CVaR"),
+         ("Few tools let you watch and inspect the search", "Browser workbench with live search and portfolio inspector")]
+for i, (g, o) in enumerate(pairs):
+    y = 2.05 + i * 1.12
+    label_box(s, 0.65, y, 5.6, 0.92, g, fill=TINT, size=16, radius=0.15, align="l")
+    label_box(s, 7.1, y, 5.7, 0.92, o, fill="FBEFE3", size=16, radius=0.15, align="l")
+    arrow(s, 6.3, y + 0.46, 7.05, y + 0.46, DARK)
+text(s, 0.65, 6.5, 12.1, 0.4, "Gaps refer to the papers surveyed here, not the whole field", 13, False, GRAY)
+notes(s, "Research gap identification and the mapping of our objectives to those gaps. The claim is limited to the surveyed papers.")
 
 # ------------------------------------------------------------------ 6 Requirements
-s = S[6]; prep(s, "Requirement Analysis and Specification")
+s = S[7]; prep(s, "Requirement Analysis and Specification")
 stats = [("12", "functional requirements", BLUE), ("7", "non-functional requirements", ORANGE), ("0", "INR software cost, all open source", GREEN)]
 for i, (n, l, c) in enumerate(stats):
     x = 0.65 + i * 4.15
@@ -249,7 +279,7 @@ text(s, 0.85, 5.75, 11.8, 0.75, "Default run: 100 individuals, 150 iterations, 2
 notes(s, "Requirements cover data input, constraints, both optimisers, live progress, inspection and error messages. Everything runs on free software; a default run takes about a second and a half.")
 
 # ------------------------------------------------------------------ 7 Design: architecture
-s = S[7]; prep(s, "Design: architecture")
+s = S[8]; prep(s, "Design: architecture")
 bands = [(1.5, 1.35, TINT, "Browser", ["Control panel", "Live swarm canvas", "Portfolio inspector", "Wealth and convergence charts"]),
          (3.35, 1.35, "E8F6F1", "Server", ["POST /api/run", "GET /api/jobs/id", "POST .../cancel", "Job manager and worker threads"]),
          (5.2, 1.45, TINT2, "Optimisation core", ["Portfolio model and repair", "MOPSO", "NSGA-II", "Pareto utilities", "Baselines and back-test"])]
@@ -266,7 +296,7 @@ text(s, 6.85, 4.75, 2.5, 0.4, "function calls", 13, False, GRAY)
 notes(s, "Three layers. The browser draws and sends JSON. The server runs jobs on worker threads and stores the latest snapshot of each population. The core is plain Python and is shared by the tests, the command line and the web app.")
 
 # ------------------------------------------------------------------ 8 Design: methodology
-s = S[8]; prep(s, "Design: methodology")
+s = S[9]; prep(s, "Design: methodology")
 text(s, 0.65, 1.45, 12, 0.4, "One repair operator, shared by both algorithms", 18, True, BLUE)
 steps = ["Clip negatives to zero", "Keep the K largest", "Drop tiny weights", "Add assets if the cap needs more", "Cap at 30% and redistribute", "Normalise to sum 1"]
 for i, st in enumerate(steps):
@@ -290,7 +320,7 @@ text(s, 0.65, 6.5, 12, 0.4, "Seeded factor-model markets with fat tails and a cr
 notes(s, "The repair operator guarantees every portfolio is long-only, fully invested, capped and within the holding limit. Six experiments vary one factor at a time, with the last using 30 independent markets.")
 
 # ------------------------------------------------------------------ 9 Implementation: optimisers
-s = S[9]; prep(s, "Implementation: the two optimisers")
+s = S[10]; prep(s, "Implementation: the two optimisers")
 cfg = [(0.65, BLUE, "MOPSO (particle swarm)", ["Particles start as feasible portfolios", "Leader chosen from the archive by crowding", "Velocity update, then repair", "Archive keeps the non-dominated set"], ["100 particles", "inertia 0.9 to 0.4", "c1 = c2 = 1.5"]),
        (6.85, ORANGE, "NSGA-II (genetic algorithm)", ["Population of feasible portfolios", "Tournament by rank and crowding", "SBX crossover, mutation and swap", "Parents and children: keep the best"], ["100 individuals", "SBX index 15", "swap mutation 0.2"])]
 for x, c, h, st, ch_ in cfg:
@@ -304,7 +334,7 @@ text(s, 0.65, 6.45, 12.2, 0.4, "Same budget for both: 15,100 objective evaluatio
 notes(s, "Both algorithms see exactly the same problem and the same evaluation budget. The swarm uses an external archive and crowding-based leaders; the genetic algorithm is standard NSGA-II with a swap mutation added.")
 
 # ------------------------------------------------------------------ 10 Implementation: workbench
-s = S[10]; prep(s, "Implementation: the workbench")
+s = S[11]; prep(s, "Implementation: the workbench")
 pic(s, FIG + "ui_overview.png", 0.6, 1.55, w=7.6, name="Workbench screenshot")
 cards = [("Watch the search", "Both populations converge on their fronts, live", BLUE), ("Inspect any portfolio", "Click a point: weights, training and held-out results", ORANGE), ("Bring your own prices", "Upload a CSV, set constraints, press Run", GREEN)]
 for i, (h, d, c) in enumerate(cards):
@@ -316,7 +346,7 @@ for i, (h, d, c) in enumerate(cards):
 notes(s, "The browser workbench runs both optimisers side by side and animates them. After the run you can click any point on a front to see its weights and how it behaved on held-out data.")
 
 # ------------------------------------------------------------------ 11 Testing
-s = S[11]; prep(s, "Testing and Validation")
+s = S[12]; prep(s, "Testing and Validation")
 for i, (n, l, c) in enumerate([("14", "automated tests pass", BLUE), ("19", "system test cases: server and browser", ORANGE), ("0", "constraint violations in every experiment run", GREEN)]):
     x = 0.65 + i * 4.15
     box(s, x, 1.6, 3.85, 2.2, TINT2, name=f"Test stat {i+1}")
@@ -331,7 +361,7 @@ for i, (h, d) in enumerate(lv):
 notes(s, "Tests run at three levels. Fourteen automated tests, nineteen system test cases including browser checks, and zero constraint violations across all experiment runs. Same seed gives the same front.")
 
 # ------------------------------------------------------------------ 12 Results: front quality
-s = S[12]; prep(s, "Results: front quality")
+s = S[13]; prep(s, "Results: front quality")
 pic(s, FIG + "fig_fronts_main.png", 0.55, 1.5, w=7.7, name="Fronts figure")
 hv = F["e1"]["hv"]
 cd = CategoryChartData(); cd.categories = ["MOPSO", "NSGA-II", "Random"]; cd.add_series("Hypervolume", [round(hv["PSO"][0], 3), round(hv["GA"][0], 3), round(hv["Random"][0], 3)])
@@ -350,7 +380,7 @@ for i, (n, l) in enumerate([("100 vs 20", "non-dominated portfolios per run: opt
 notes(s, "Both optimisers find roughly one hundred non-dominated portfolios against about twenty for random search, with hypervolume about 0.70 versus 0.25. The genetic algorithm is marginally ahead on average but the difference is tiny next to the seed-to-seed spread.")
 
 # ------------------------------------------------------------------ 13 Results: budget
-s = S[13]; prep(s, "Results: search budget")
+s = S[14]; prep(s, "Results: search budget")
 e4 = F["e4"]
 cd = CategoryChartData(); cd.categories = [r[1] for r in e4["table"]]
 cd.add_series("MOPSO", [round(v, 3) for v in e4["hv"]["PSO"]]); cd.add_series("NSGA-II", [round(v, 3) for v in e4["hv"]["GA"]]); cd.add_series("Random search", [round(v, 3) for v in e4["hv"]["Random"]])
@@ -370,7 +400,7 @@ for i, (h, d, c) in enumerate(cards):
 notes(s, "With few evaluations the swarm is clearly better; it reaches in 10 iterations what the genetic algorithm needs 25 to 50 iterations to match. From 100 iterations the genetic algorithm finishes slightly ahead.")
 
 # ------------------------------------------------------------------ 14 Results: held-out
-s = S[14]; prep(s, "Results: held-out performance")
+s = S[15]; prep(s, "Results: held-out performance")
 sm = F["e5"]["sharpe_means"]
 keys = [("Equal weight", "Equal weight"), ("PSO best Sharpe", "Swarm: best Sharpe"), ("GA best Sharpe", "GA: best Sharpe"), ("PSO min volatility", "Swarm: min vol."), ("GA min volatility", "GA: min vol.")]
 cd = CategoryChartData(); cd.categories = [k[1] for k in keys]
@@ -397,7 +427,7 @@ text(s, 0.85, 5.72, 11.75, 0.9, "Return does not transfer to new data. Risk does
 notes(s, "Average over 30 independent simulated markets. Portfolios chosen for the best Sharpe ratio looked excellent in training but fell below equal weight on unseen data. Minimum-volatility portfolios were calmer than equal weight in every one of the 30 markets.")
 
 # ------------------------------------------------------------------ 15 Results: robustness
-s = S[15]; prep(s, "Results: robustness checks")
+s = S[16]; prep(s, "Results: robustness checks")
 for i in range(3):
     box(s, 0.65 + i * 4.15, 1.55, 3.85, 4.9, TINT2, name=f"Robustness tile {i+1}")
 text(s, 0.65, 1.65, 3.85, 0.5, "Scale", 20, True, BLUE, "c")
@@ -417,7 +447,7 @@ text(s, 9.15, 4.0, 3.45, 2.2, ["No turbulence: p = 0.64", "No swap mutation: p =
 notes(s, "Run time stays near one and a half seconds from 10 to 60 assets. The repair operator kept every portfolio feasible. The two extra operators we added did not measurably help, which we report honestly.")
 
 # ------------------------------------------------------------------ 16 Conclusion
-s = S[16]; prep(s, "Conclusion")
+s = S[17]; prep(s, "Conclusion")
 cc = [("Both optimisers work", "Far better fronts than random search; every constraint respected", BLUE, "1"), ("Return does not transfer", "Best-Sharpe picks: 1.34 in training, 0.53 held out; equal weight 0.59", ORANGE, "2"), ("Risk does", "Minimum-volatility picks were calmer than equal weight in 30 of 30 markets", GREEN, "3")]
 for i, (h, d, c, n) in enumerate(cc):
     x = 0.65 + i * 4.15
@@ -432,7 +462,7 @@ for i, (g, w) in enumerate([("Real market data", 2.7), ("Shrinkage estimators", 
 notes(s, "Three take-aways: the optimisers work, historical returns do not predict future returns well, but risk estimates do transfer. Future work: real market data, shrinkage estimators, costs as an objective and a hosted version for classes.")
 
 # ------------------------------------------------------------------ 17 POs
-s = S[17]; prep(s, "Program Outcomes Attained")
+s = S[18]; prep(s, "Program Outcomes Attained")
 pos = [("PO1", "Engineering knowledge", 3), ("PO2", "Problem analysis", 3), ("PO3", "Design of solutions", 2), ("PO4", "Investigation of problems", 3), ("PO5", "Modern tool usage", 3), ("PO6", "Engineer and the world", 1), ("PO7", "Ethics", 2),
        ("PO8", "Teamwork", 3), ("PO9", "Communication", 2), ("PO10", "Project management", 2), ("PO11", "Life-long learning", 2), ("PSO1", "Design AI systems", 3), ("PSO2", "Decisions with AI and data", 2), ("PSO3", "End-to-end systems", 3)]
 fills = {3: (BLUE, WHITE), 2: (MID, DARK), 1: ("DCE6EE", DARK)}
