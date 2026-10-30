@@ -3,7 +3,7 @@ const { d, FONT, W, para, table, REG, CITE } = L;
 const C = d.AlignmentType.CENTER;
 const { TITLE } = require('./front');
 const T = (text, o = {}) => new d.TextRun({ text, font: FONT, size: o.size || 24, bold: o.bold, underline: o.underline ? {} : undefined });
-const head = (text, pb = true) => new d.Paragraph({ alignment: C, pageBreakBefore: pb, spacing: { before: 0, after: 240 }, children: [T(text, { bold: true, size: 28 })] });
+const head = (text, pb = true, after = 240) => new d.Paragraph({ alignment: C, pageBreakBefore: pb, spacing: { before: 0, after }, children: [T(text, { bold: true, size: 28 })] });
 
 function attainment() {
   const levelTable = (rows, label, w) => new d.Table({ width: { size: W.text, type: d.WidthType.DXA }, columnWidths: w, rows: [
@@ -32,7 +32,7 @@ function attainment() {
     new d.Paragraph({ pageBreakBefore: true, alignment: C, spacing: { after: 0 }, children: [T('B.M.S. College of Engineering.', { bold: true, size: 28 })] }),
     new d.Paragraph({ alignment: C, spacing: { after: 0 }, children: [T('Department of AI & DS', { bold: true })] }),
     new d.Paragraph({ alignment: C, spacing: { after: 120 }, children: [T('Attainment of POs and PSOs', { bold: true, underline: true })] }),
-    new d.Paragraph({ spacing: { after: 40 }, children: [T('Batch no.: ____', { size: 22 }), T('\t\t\t\t\tDate: ____________', { size: 22 })] }),
+    new d.Paragraph({ spacing: { after: 40 }, tabStops: [{ type: d.TabStopType.RIGHT, position: W.text }], children: [T('Batch no.: ______', { size: 22 }), T('\tDate: ______________', { size: 22 })] }),
     new d.Paragraph({ spacing: { after: 100 }, children: [T('Project Title: ', { size: 22, bold: true }), T(TITLE, { size: 22 })] }),
     new d.Paragraph({ spacing: { after: 60 }, keepNext: true, children: [T('PROGRAM OUTCOMES', { bold: true, size: 22 })] }),
     levelTable(po, 'PO', [800, 1500, 6431]),
@@ -42,12 +42,12 @@ function attainment() {
 }
 
 function references() {
-  const els = [head('REFERENCES')];
+  const els = [head('REFERENCES', true, 960)];
   CITE.order.forEach((k, i) => {
     els.push(new d.Paragraph({
-      alignment: d.AlignmentType.LEFT, spacing: { line: 240, after: 160 }, indent: { left: 540, hanging: 540 },
-      tabStops: [{ type: d.TabStopType.LEFT, position: 540 }],
-      children: [T(`[${i + 1}]\t`, { size: 22 }), ...L.runs(require('./refs')[k], { font: FONT, size: 22 })],
+      alignment: d.AlignmentType.LEFT, spacing: { line: 240, lineRule: d.LineRuleType.AUTO, after: 200 }, indent: { left: 600, hanging: 600 },
+      tabStops: [{ type: d.TabStopType.LEFT, position: 600 }],
+      children: [T(`[${i + 1}]\t`, { size: 24 }), ...L.runs(require('./refs')[k], { font: FONT, size: 24 })],
     }));
   });
   return els;
@@ -84,9 +84,9 @@ function appendices() {
     PO5: 'Chapter 5 and Section 3.4: NumPy, pandas, SciPy, Matplotlib, pytest', PO6: 'Section 1.5: SDGs', PO7: 'Sections 3.7.1 and 5.4; reference list',
     PO8: 'Team organisation of the project', PO9: 'This report and the interactive interface', PO10: 'Sections 1.8, 3.5 and 3.7', PO11: 'Whole project',
   };
-  out.push(...table(['PO', 'Statement', 'Addressed in'], POTXT.map(([id, t]) => [id, t, map[id]]), [700, 5231, 2800], 'Program Outcomes (PO) mapped to the project', { size: 19 }));
+  out.push(...table(['PO', 'Statement', 'Addressed in'], POTXT.map(([id, t]) => [id, t, map[id]]), [700, 5231, 2800], 'Program Outcomes (PO) mapped to the project', { size: 20 }));
   const pmap = { PSO1: 'Chapters 4 and 5: design and implementation', PSO2: 'Chapter 7: results interpreted for investment decisions', PSO3: 'Whole system: data, optimisation, evaluation, interface, tests' };
-  out.push(...table(['PSO', 'Statement', 'Addressed in'], PSOTXT.map(([id, t]) => [id, t, pmap[id]]), [700, 5231, 2800], 'Programme Specific Outcomes (PSO) mapped to the project', { size: 19 }));
+  out.push(...table(['PSO', 'Statement', 'Addressed in'], PSOTXT.map(([id, t]) => [id, t, pmap[id]]), [700, 5231, 2800], 'Programme Specific Outcomes (PSO) mapped to the project', { size: 20 }));
   out.push(head('APPENDIX C: AI Generated Report and Plagiarism report Screen shot'));
   out.push(para('Insert here the screenshots of the AI-generated-content report and the plagiarism (similarity) report produced by the institution’s checking tool for this report, as required by the department. These reports can only be generated from the final document after it is submitted to the tool, so this page is left for the team to complete.'));
   return out;

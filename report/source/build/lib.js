@@ -136,8 +136,8 @@ const border = { style: d.BorderStyle.SINGLE, size: 4, color: '000000' };
 const borders = { top: border, bottom: border, left: border, right: border };
 function cell(text, w, o = {}) {
   const paras = String(text).split('\n').map((line) => new d.Paragraph({
-    alignment: o.align || d.AlignmentType.LEFT, spacing: { line: 252, after: 20, before: 20 },
-    children: runs(line, { font: o.mono ? 'Courier New' : FONT, size: o.size || 21, bold: o.bold }),
+    keepNext: o.keepNext, alignment: o.align || d.AlignmentType.LEFT, spacing: { line: 252, lineRule: d.LineRuleType.AUTO, after: 20, before: 20 },
+    children: runs(line, { font: o.mono ? 'Courier New' : FONT, size: o.size || 22, bold: o.bold }),
   }));
   return new d.TableCell({
     width: { size: w, type: d.WidthType.DXA }, borders, verticalAlign: d.VerticalAlign.CENTER,
@@ -150,13 +150,18 @@ function table(headers, rows, widths, caption, o = {}) {
   COUNT.tab[ch] = (COUNT.tab[ch] || 0) + 1;
   const label = `Table ${ch}.${COUNT.tab[ch]}`;
   REG.tabs.push({ label, caption, key: `t:${label}` });
-  const total = widths.reduce((a, b) => a + b, 0);
+  // every table spans the full text width so that all tables align with the text edges
+  const sum0 = widths.reduce((a, b) => a + b, 0);
+  widths = widths.map((x) => Math.round(x * W.text / sum0));
+  widths[widths.length - 1] += W.text - widths.reduce((a, b) => a + b, 0);
+  const total = W.text;
+  const keep = rows.length <= 12;               // short tables stay on one page
   const aligns = o.aligns || widths.map(() => d.AlignmentType.LEFT);
   const tbl = new d.Table({
     width: { size: total, type: d.WidthType.DXA }, columnWidths: widths, alignment: d.AlignmentType.CENTER,
     rows: [
-      new d.TableRow({ tableHeader: true, cantSplit: true, children: headers.map((h, i) => cell(h, widths[i], { bold: true, fill: 'E7E7E7', align: d.AlignmentType.CENTER, size: o.size })) }),
-      ...rows.map((r) => new d.TableRow({ cantSplit: true, children: r.map((c, i) => cell(c, widths[i], { align: aligns[i], size: o.size, bold: o.boldFirst && i === 0 })) })),
+      new d.TableRow({ tableHeader: true, cantSplit: true, children: headers.map((h, i) => cell(h, widths[i], { bold: true, fill: 'E7E7E7', align: d.AlignmentType.CENTER, size: o.size, keepNext: keep })) }),
+      ...rows.map((r, ri) => new d.TableRow({ cantSplit: true, children: r.map((c, i) => cell(c, widths[i], { align: aligns[i], size: o.size, bold: o.boldFirst && i === 0, keepNext: keep && ri < rows.length - 1 })) })),
     ],
   });
   return [
@@ -170,8 +175,8 @@ function code(lines, caption) {
   const out = [];
   if (caption) out.push(new d.Paragraph({ keepNext: true, spacing: { before: 120, after: 60 }, alignment: d.AlignmentType.LEFT, children: runs(`**${caption}**`, { font: FONT, size: 22 }) }));
   const rows = lines.map((l) => new d.Paragraph({
-    spacing: { line: 240, after: 0 }, keepLines: true,
-    children: [new d.TextRun({ text: l.replace(/^( +)/, (m) => ' '.repeat(m.length)), font: 'Courier New', size: 16 })],
+    spacing: { line: 240, lineRule: d.LineRuleType.AUTO, after: 0 }, keepLines: true,
+    children: [new d.TextRun({ text: l.replace(/^( +)/, (m) => ' '.repeat(m.length)), font: 'Courier New', size: 17 })],
   }));
   out.push(new d.Table({
     width: { size: W.text, type: d.WidthType.DXA }, columnWidths: [W.text],
@@ -183,7 +188,7 @@ function code(lines, caption) {
 }
 function equation(text, num) {
   return new d.Paragraph({
-    spacing: { before: 60, after: 120, line: 300 },
+    spacing: { before: 60, after: 120, line: 300, lineRule: d.LineRuleType.AUTO },
     tabStops: [{ type: d.TabStopType.CENTER, position: Math.round(W.text / 2) }, { type: d.TabStopType.RIGHT, position: W.text }],
     children: [new d.TextRun({ text: '\t', font: FONT }), ...runs(text, { font: FONT, size: 24 }), new d.TextRun({ text: `\t(${num})`, font: FONT, size: 24 })],
   });
