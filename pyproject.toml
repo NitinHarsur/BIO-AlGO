@@ -15,9 +15,13 @@ dev = ["pytest"]
 
 [project.scripts]
 swarmfolio = "swarmfolio.cli:main"
+swarmfolio-web = "swarmfolio.server:main"
 
 [tool.setuptools]
 packages = ["swarmfolio"]
+
+[tool.setuptools.package-data]
+swarmfolio = ["web/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
