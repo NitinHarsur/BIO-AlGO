@@ -132,7 +132,7 @@ for r, sz in zip(runs, sizes):
 runs[4].font.bold = True; runs[4].font.color.rgb = rgb(DARK)
 runs[2].text = "Department of Artificial Intelligence and Data Science"
 runs[4].text = "SwarmFolio: Multi-Objective Stock Portfolio Optimization Using Particle Swarm Optimization and Genetic Algorithms"
-runs[3].text = "Project Work (23AI7PWPP2) Final Presentation on"
+runs[3].text = "Project Work Bio-Inspired Algorithms (23DS7BSBIO) Final Presentation on"
 text(s, 2.3, 4.45, 4.7, 0.4, "Submitted by", 16, True, BLUE, name="Team heading")
 people = [("Vivek Boora", "1BM23AD073"), ("Ayush Pandey", "1BM23AD074"), ("Nitin", "1BM24AD404")]
 for i, (n, u) in enumerate(people):
