@@ -10,9 +10,8 @@ from .problem import OptResult, PortfolioProblem
 PERIODS = 252
 
 
-def pick(result: OptResult, how: str, problem: PortfolioProblem) -> np.ndarray:
-    """Choose one portfolio from a front: 'sharpe', 'minvol' or 'knee'."""
-    F = result.objs
+def pick_index(F: np.ndarray, how: str, problem: PortfolioProblem) -> int:
+    """Row of a front chosen by rule: 'sharpe', 'minvol' or 'knee'."""
     if how == "sharpe":
         i = int(np.argmax(problem.sharpe(F)))
     elif how == "minvol":
@@ -23,7 +22,11 @@ def pick(result: OptResult, how: str, problem: PortfolioProblem) -> np.ndarray:
         i = int(np.argmin(np.linalg.norm(Z, axis=1)))
     else:
         raise ValueError(f"unknown selection rule {how!r}")
-    return result.weights[i]
+    return i
+
+
+def pick(result: OptResult, how: str, problem: PortfolioProblem) -> np.ndarray:
+    return result.weights[pick_index(result.objs, how, problem)]
 
 
 def performance(daily: np.ndarray | pd.Series, rf: float = 0.0, alpha: float = 0.05) -> dict:

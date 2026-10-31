@@ -45,6 +45,19 @@ with weights), `walk_forward.csv`, and plots (`pareto_fronts.png`, `convergence.
 From each front, three portfolios are picked on the training window: max-Sharpe, min-volatility and
 the "knee" (closest to the ideal point), then evaluated on the held-out test period.
 
+## Web app
+
+```bash
+python -m swarmfolio.server --port 8000     # or: swarmfolio-web
+```
+
+Open http://127.0.0.1:8000. Both optimizers run side by side and you can watch each population collapse onto
+its Pareto front. Once they finish you can click any point on the chart (or drag the slider along the front) to
+see that portfolio's weights, its training versus held-out performance, and its growth of 1 against equal weight.
+Constraints, search budget, and your own price CSV are set in the left panel. The server uses only the standard
+library and the frontend has no build step (`swarmfolio/web/`). Fonts fall back to the system stack; install Geist
+locally and the page picks it up.
+
 ## Use as a library
 
 ```python

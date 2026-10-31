@@ -28,7 +28,7 @@ class MOPSO:
             AW, AF = AW[k], AF[k]
         return AW, AF
 
-    def run(self, problem: PortfolioProblem) -> OptResult:
+    def run(self, problem: PortfolioProblem, callback=None) -> OptResult:
         rng = np.random.default_rng(self.seed)
         n0 = problem.n_evals
         P, N = self.n_particles, problem.n
@@ -39,6 +39,8 @@ class MOPSO:
         PB, PBF = X.copy(), F.copy()
         AW, AF = self._update_archive(np.empty((0, N)), np.empty((0, 3)), X, F)
         history = [float(problem.sharpe(AF).max())]
+        if callback:
+            callback(0, self.iters, F, AF)
 
         for it in range(self.iters):
             w = self.w_start - (self.w_start - self.w_end) * it / max(1, self.iters - 1)
@@ -69,5 +71,7 @@ class MOPSO:
 
             AW, AF = self._update_archive(AW, AF, X, F)
             history.append(float(problem.sharpe(AF).max()))
+            if callback:
+                callback(it + 1, self.iters, F, AF)
 
         return OptResult(AW, AF, problem.n_evals - n0, history, "PSO")

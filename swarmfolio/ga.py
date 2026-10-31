@@ -54,15 +54,17 @@ class NSGA2:
                 X[i, src] = 0.0
         return X
 
-    def run(self, problem: PortfolioProblem) -> OptResult:
+    def run(self, problem: PortfolioProblem, callback=None) -> OptResult:
         rng = np.random.default_rng(self.seed)
         n0 = problem.n_evals
         P = self.pop_size
         X = problem.random_weights(P, rng)
         F = problem.evaluate(X)
         history = [float(problem.sharpe(F).max())]
+        if callback:
+            callback(0, self.generations, F, F[nondominated_mask(F)])
 
-        for _ in range(self.generations):
+        for gen in range(self.generations):
             ranks, crowd = self._rank_and_crowd(F)
             p1 = self._tournament(ranks, crowd, P, rng)
             p2 = self._tournament(ranks, crowd, P, rng)
@@ -76,6 +78,8 @@ class NSGA2:
             order = np.lexsort((-crowd, ranks))[:P]       # rank asc, crowding desc
             X, F = XA[order], FA[order]
             history.append(float(problem.sharpe(F).max()))
+            if callback:
+                callback(gen + 1, self.generations, F, F[ranks[order] == 0])
 
         keep = nondominated_mask(F)
         _, uniq = np.unique(np.round(F[keep], 10), axis=0, return_index=True)
