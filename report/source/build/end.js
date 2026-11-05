@@ -92,4 +92,4 @@ function appendices() {
   return out;
 }
 
-module.exports = { attainment, references, appendices };
+module.exports = { attainment, references };

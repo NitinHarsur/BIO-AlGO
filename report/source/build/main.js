@@ -14,7 +14,6 @@ const OUT = process.argv[2] || path.join(L.ROOT, 'SwarmFolio_Project_Report.docx
 const body = [...ch1(), ...ch2(), ...ch3(), ...ch4(), ...ch5(), ...ch6(), ...ch7(), ...ch8()];
 const attain = end.attainment();
 const refs = end.references();
-const apps = end.appendices();
 
 const page = (extra = {}) => ({ size: { width: W.page, height: 16838 }, margin: { top: W.top, bottom: W.bottom, left: W.left, right: W.right, header: 567, footer: 567 }, ...extra });
 const footerRoman = new d.Footer({ children: [new d.Paragraph({ alignment: d.AlignmentType.CENTER, children: [new d.TextRun({ children: [d.PageNumber.CURRENT], font: FONT, size: 22 })] })] });
@@ -42,7 +41,7 @@ const doc = new d.Document({
       children: [...front.abstract(abstractText), ...front.declaration(), ...front.acknowledgement(), ...front.tocTables(),
         ...front.listPage('LIST OF TABLES', L.REG.tabs, 'Tables', 'lot'), ...front.listPage('LIST OF FIGURES', L.REG.figs, 'Figures', 'lof')] },
     { properties: { type: d.SectionType.NEXT_PAGE, page: page({ pageNumbers: { start: 1, formatType: d.NumberFormat.DECIMAL } }) }, footers: { default: footerChap },
-      children: [...body, ...attain, ...refs, ...apps] },
+      children: [...body, ...attain, ...refs] },
   ],
 });
 d.Packer.toBuffer(doc).then((b) => {

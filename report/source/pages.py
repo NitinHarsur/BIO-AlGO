@@ -21,7 +21,7 @@ roman = lambda i: rom[i - ab + 1]
 arab = lambda i: i - ch1 + 1
 for key, title in [("abstract", "ABSTRACT"), ("declaration", "DECLARATION"), ("ack", "ACKNOWLEDGEMENT"), ("lot", "LIST OF TABLES"), ("lof", "LIST OF FIGURES")]:
     i = find_first(lambda i: first(i) == title, ab); pages[key] = roman(i) if i is not None else "?"
-for key, title in [("pos", "B.M.S. College of Engineering."), ("refs", "REFERENCES"), ("appA", "APPENDIX A:"), ("appB", "APPENDIX B:"), ("appC", "APPENDIX C:")]:
+for key, title in [("pos", "B.M.S. College of Engineering."), ("refs", "REFERENCES")]:
     i = find_first(lambda i: first(i).startswith(title), ch1); pages[key] = arab(i) if i is not None else "?"
 for h in lay["heads"]:
     if h["level"] == 1:

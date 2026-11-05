@@ -21,7 +21,7 @@ function cover() {
     p(t('VISVESVARAYA TECHNOLOGICAL UNIVERSITY', { bold: true, size: 28 }), { after: 60 }),
     p(t('“Jnana Sangama”, Belgaum-590018.', { bold: true }), { after: 100 }),
     p(new d.ImageRun({ ...{ type: 'png', data: fs.readFileSync(path.join(LOGO, 'vtu.png')), transformation: { width: 92, height: 65 } } }), { after: 160 }),
-    p(t('PROJECT WORK BIO-INSPIRED ALGORITHMS (23DS7BSBIO) REPORT', { bold: true }), { after: 100 }),
+    p(t('BIO INSPIRED ALGORITHMS (23DS7BSBIO) PROJECT REPORT', { bold: true }), { after: 100 }),
     p(t('ON', { size: 24 }), { after: 100 }),
     p(t(TITLE, { bold: true, size: 28 }), { after: 100, line: 300 }),
     p(t('Risk, return and tail-risk trade-offs with a live optimisation workbench', { bold: true }), { after: 200 }),
@@ -131,8 +131,7 @@ function tocTables() {
       L.cell(h.level === 3 ? '    ' + h.title : h.title, w2[1], { bold: h.level === 1, size: 20 }),
       L.cell(L.pg(h.key), w2[2], { bold: h.level === 1, align: C, size: 20 })] }));
   }
-  for (const [a, k] of [['POs attained with Justification', 'pos'], ['REFERENCES', 'refs'], ['APPENDIX A: Details of list of publications related to this project', 'appA'],
-    ['APPENDIX B: POs and PSOs Mapped', 'appB'], ['APPENDIX C: AI Generated Report and Plagiarism report Screen shot', 'appC']]) {
+  for (const [a, k] of [['POs attained with Justification', 'pos'], ['REFERENCES', 'refs']]) {
     rows.push(new d.TableRow({ cantSplit: true, children: [L.cell('', w2[0], { size: 20 }), L.cell(a, w2[1], { size: 20 }), L.cell(L.pg(k), w2[2], { align: C, size: 20 })] }));
   }
   return [titleP('TABLE OF CONTENTS'), t1, new d.Paragraph({ spacing: { after: 200 }, children: [] }),
