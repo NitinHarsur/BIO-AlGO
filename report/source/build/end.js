@@ -11,22 +11,18 @@ function attainment() {
     ...rows.map(([id, lv, j]) => new d.TableRow({ cantSplit: true, children: [L.cell(id, w[0], { align: C, bold: true }), L.cell(String(lv), w[1], { align: C }), L.cell(j, w[2], { size: 20 })] })),
   ] });
   const po = [
-    ['PO1', 3, 'Portfolio theory, probability and statistics, and multi-objective optimisation were applied to formulate and solve the problem in software.'],
-    ['PO2', 3, 'The problem was formulated with three objectives and four constraints; literature was reviewed (Chapter 2), gaps identified and conclusions supported by experiments.'],
-    ['PO3', 2, 'A layered system (library, server, interface) was designed and built to meet the requirements in Chapter 3; public-health and environmental considerations are not directly relevant.'],
-    ['PO4', 3, 'Six controlled experiments with seeds, statistical tests and ablations were designed and analysed (Chapters 4 and 7).'],
-    ['PO5', 3, 'NumPy, pandas, Matplotlib, SciPy, pytest and a browser canvas were used, and their limitations (for example the Monte Carlo hypervolume) are stated.'],
-    ['PO6', 1, 'Societal relevance is discussed through the SDGs (Section 1.5); sustainability impact is limited.'],
-    ['PO7', 2, 'Sources are cited in IEEE style, results are reported without selection, and the report states that the tool is not investment advice.'],
-    ['PO8', 3, 'The work was divided among three team members across modules, experiments and documentation, and integrated through one repository.'],
-    ['PO9', 2, 'A structured report, figures and an interactive interface communicate the work to technical and non-technical readers.'],
-    ['PO10', 2, 'A work plan, cost estimate and risk register were prepared and followed (Sections 1.8, 3.5 and 3.7).'],
-    ['PO11', 2, 'The team learned multi-objective metaheuristics, statistical evaluation and browser-based visualisation, which were new to the course content.'],
+    ['PO1', 3, 'Portfolio theory, statistics and multi-objective optimisation were applied to formulate and solve the portfolio problem in software (Chapters 1, 4 and 5).'],
+    ['PO2', 3, 'The problem was formulated with three objectives and four constraints; literature was reviewed and gaps identified (Chapter 2) and conclusions were supported by experiments (Chapter 7).'],
+    ['PO3', 2, 'A layered system (library, server, browser interface) was designed to the requirements of Chapter 3 and built (Chapters 4 and 5), with input validation and security measures (Section 5.4).'],
+    ['PO4', 3, 'Six controlled experiments with seeds, statistical tests and ablations were designed, run and analysed (Chapters 4, 6 and 7).'],
+    ['PO5', 3, 'NumPy, pandas, Matplotlib, SciPy, pytest and a browser canvas interface were used, and their limitations are stated (Sections 3.4, 5.2 and 7.4).'],
+    ['PO9', 2, 'This report, the presentation and the interactive interface communicate the work to technical and non-technical readers (Section 4.1.3).'],
+    ['PO10', 2, 'A work plan, a cost estimate and a risk register were prepared (Sections 1.8, 3.5 and 3.7).'],
   ];
   const pso = [
-    ['PSO1', 3, 'A computing system using AI techniques (swarm and evolutionary search) was designed and developed.'],
-    ['PSO2', 2, 'Optimisation and statistical methods were applied to a financial decision problem and its results were interpreted for decision making.'],
-    ['PSO3', 3, 'An end-to-end system was built, from data generation and import through optimisation and evaluation to an interactive interface and tests.'],
+    ['PSO1', 3, 'A computing system using AI techniques (particle swarm and evolutionary search) was designed and developed (Chapters 4 and 5).'],
+    ['PSO2', 2, 'Optimisation and statistical evaluation were applied to an investment decision problem, and the results were interpreted for decision making (Chapter 7).'],
+    ['PSO3', 3, 'An end-to-end system was built: data generation and import, optimisation, evaluation, an interactive interface and tests (Chapters 4 to 6).'],
   ];
   return [
     new d.Paragraph({ pageBreakBefore: true, alignment: C, spacing: { after: 0 }, children: [T('B.M.S. College of Engineering.', { bold: true, size: 28 })] }),
